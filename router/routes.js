@@ -1,8 +1,10 @@
 const router = require('express').Router()
 const Upload = require('../services/ImageUpload')
 const UserController = require('../controllers/UsersController')
+const PollController = require('../controllers/PollController')
 const passport = require('passport')
 const expressRateLimiter = require('express-rate-limit')
+const { CreatePoll } = require('../controllers/PollController')
 
 
 const rateLimiter = expressRateLimiter({
@@ -25,5 +27,20 @@ router.post('/forgot-password',rateLimiter,UserController.ForgotPassword)
 
 router.put('/reset-password',UserController.ResetPassword);
 // end of user routes
+
+// poll routes
+// passport.authenticate('jwt',{session:false})
+// add this middleware to any route you want to protect
+
+// create poll
+router.post('/create-poll',PollController.CreatePoll);
+// edit poll
+router.put('/edit-poll/:id',PollController.EditPoll);
+// get all poll
+router.get('/poll/:id',PollController.GetPoll);
+// close poll
+router.put('/close-poll/:id',PollController.ClosePoll);
+// delete poll
+router.delete('/delete-poll/:id',PollController.DeletePoll);
 
 module.exports =router

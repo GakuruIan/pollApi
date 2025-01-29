@@ -2,6 +2,7 @@ const router = require('express').Router()
 const Upload = require('../services/ImageUpload')
 const UserController = require('../controllers/UsersController')
 const PollController = require('../controllers/PollController')
+const VoteController = require('../controllers/voteController')
 const passport = require('passport')
 const expressRateLimiter = require('express-rate-limit')
 const { CreatePoll } = require('../controllers/PollController')
@@ -42,5 +43,8 @@ router.get('/poll/:id',PollController.GetPoll);
 router.put('/close-poll/:id',PollController.ClosePoll);
 // delete poll
 router.delete('/delete-poll/:id',PollController.DeletePoll);
+
+// vote
+router.post('/vote',VoteController.Vote);
 
 module.exports =router

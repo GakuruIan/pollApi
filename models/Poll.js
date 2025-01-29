@@ -1,7 +1,6 @@
-const { required } = require('joi')
 const mongoose = require('mongoose')
 
-const optionSchema =mongoose.Schema({
+const optionSchema =new mongoose.Schema({
     option:{type:String,default:null},
     image_url:{type:String,default:null},
     position:{type:Number,default:null}
@@ -32,10 +31,6 @@ const pollSchema = mongoose.Schema({
     },
     options:[optionSchema],
     settings:{
-         allow_ananymous:{
-            type:Boolean,
-            default:false
-        },
          require_account:{
             type:Boolean,
             default:false
@@ -44,10 +39,11 @@ const pollSchema = mongoose.Schema({
             type:Boolean
             ,default:false
         },
-         allow_multiple_votes:{
-            type:Boolean,
-            default:false
-        }
+        
+    },
+    allow_multiple_votes:{
+        type:Boolean,
+        default:false
     },
     openDate:{
       type:Date,

@@ -24,11 +24,10 @@ exports.CreatePoll = async (req, res) => {
             })).required(),
             ip: Joi.string().required(),
             pollSettings: Joi.object({
-                allow_ananymous: Joi.boolean().default(false),
                 require_account: Joi.boolean().default(false),
                 one_vote_per_ip: Joi.boolean().default(false),
-                allow_multiple_votes: Joi.boolean().default(false)
             }),
+            allow_multiple_votes: Joi.boolean().default(false),
             openDate: Joi.date().required(),
             closeDate: Joi.date().required()
         });

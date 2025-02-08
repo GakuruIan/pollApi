@@ -4,13 +4,13 @@ const Poll = require('../models/Poll');
 const jwt = require('jsonwebtoken');
 
 exports.Vote = async (req, res) => {
-    const { poll_id,selected_options,ip_address,ranks } = req.body;
+    const { poll_id,selected_options,ip_address,ranks} = req.body;
      
     try {
 
         const voteSchema = Joi.object({
             poll_id: Joi.string().required(),
-            selected_options:Joi.array().required(),
+            selected_options:Joi.array().default([]),
             ip_address: Joi.string().required(),
             ranks: Joi.array().default([])
         });
@@ -53,10 +53,12 @@ exports.Vote = async (req, res) => {
 
         // checking type of the poll
         if (poll.poll_type === 'ranking') {
-            if (!rank) {
+            if (!ranks) {
                 return res.status(400).json({message: 'Rank is required'});
             }
         }
+
+       
         
         // for multiple choice 
         const newVote = new Vote({
@@ -64,6 +66,7 @@ exports.Vote = async (req, res) => {
             voter_id:decoded.userID,
             ip_address,
             selected_options,
+            ranks
         })
        
        

@@ -26,7 +26,7 @@ const pollSchema = mongoose.Schema({
     },
     poll_type:{
         type:String,
-        enum:['ranking','multiple_choice','image_poll'],
+        enum:['ranking','multiple_choice'],
         required:true
     },
     options:[optionSchema],
@@ -64,7 +64,18 @@ const pollSchema = mongoose.Schema({
     isClosed:{
         type:Boolean,
         default:false
-    },
+    }
 },{timestamps:true})
+
+pollSchema.post('findOneAndDelete',async function(poll){
+    const vote = mongoose.model('vote')
+
+    const results = mongoose.model('results')
+
+    if(poll){
+        await vote.deleteMany({poll_id:poll._id})
+        await results.deleteMany({poll_id:poll._id})
+    }
+})
 
 module.exports = mongoose.model('poll',pollSchema)

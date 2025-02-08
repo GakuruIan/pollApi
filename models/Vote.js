@@ -101,7 +101,6 @@ voteSchema.post("save", async (doc, next) => {
         if (poll.allow_multiple_votes) {
           await Promise.all(
             doc.selected_options.map(async (selected_option) => {
-
               const result = await results.findOneAndUpdate(
                 {
                   poll_id: doc.poll_id,
@@ -113,7 +112,6 @@ voteSchema.post("save", async (doc, next) => {
 
                 { upsert: false }
               );
-
 
               if (!result) {
                 await results.findOneAndUpdate(
@@ -140,7 +138,7 @@ voteSchema.post("save", async (doc, next) => {
           doc.ranks.map(async (rank) => {
             const rankScore = maxScore - rank.rank_position + 1;
 
-            await results.updateOne(
+            const result = await results.findOneAndUpdate(
               {
                 poll_id: doc.poll_id,
                 "ranking_results.option_id": rank.option_id,
@@ -148,14 +146,33 @@ voteSchema.post("save", async (doc, next) => {
               {
                 $inc: { "ranking_results.$.rank_score": rankScore },
               },
-              {
-                upsert: true,
-              }
+
+              { upsert: false }
             );
+
+            if (!result) {
+              await results.findOneAndUpdate(
+                {
+                  poll_id: doc.poll_id,
+                 
+                },
+
+                {
+                  $push: {
+                    ranking_results: {
+                      option_id: rank.option_id,
+                      rank_score: rankScore,
+                      ranking_position: rank.rank_position,
+                    },
+                  },
+                },
+                { upsert: true }
+              );
+            }
           })
         );
 
-        const Results = await results.findById({ poll_id: doc.poll_id });
+        const Results = await results.findOne({ poll_id: doc.poll_id });
 
         if (Results) {
           const sortedScores = Results.ranking_results.sort(

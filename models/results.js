@@ -29,9 +29,8 @@ const resultSchema = new mongoose.Schema({
                 default:0
             },
             ranking_position:{
-                type:Map,
-                of:Number,
-                default:{}
+                type:Number,
+                default:0
             }
         }
     ],

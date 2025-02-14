@@ -44,8 +44,6 @@ exports.CreatePoll = async (req, res) => {
             return res.status(400).json({message: 'You must provide at least two options'});
         }
 
-        console.log(req.cookies)
-
 
         const newPoll = new Poll({
             creator: userID,
@@ -60,9 +58,7 @@ exports.CreatePoll = async (req, res) => {
             requirePartcipantName
         });
 
-        // const createdPoll = await newPoll.save();
-
-        const createdPoll = {}
+        const createdPoll = await newPoll.save();
 
         res.status(201).json({message: 'Poll created successfully',pollID:createdPoll?._id,type:createdPoll?.poll_type});
     } catch (error) {
@@ -153,7 +149,7 @@ exports.GetPoll = async (req, res) => {
     const pollID = req.params.id;
 
     try {
-        const poll = await Poll.findById(pollID).populate('creator','name email');
+        const poll = await Poll.findById(pollID).populate('creator','name')
 
         if (!poll) {
             return res.status(404).json({message: 'Poll not found'});

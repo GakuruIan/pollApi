@@ -2,16 +2,17 @@ const Vote = require('../models/Vote');
 const Joi = require('joi');
 const Poll = require('../models/Poll');
 const jwt = require('jsonwebtoken');
+const ip = require('ip')
 
 exports.Vote = async (req, res) => {
-    const { poll_id,selected_options,ip_address,ranks} = req.body;
-     
+    const { poll_id,selected_options,ranks} = req.body;
+    const ip_address = ip.address()
+
     try {
 
         const voteSchema = Joi.object({
             poll_id: Joi.string().required(),
             selected_options:Joi.array().default([]),
-            ip_address: Joi.string().required(),
             ranks: Joi.array().default([])
         });
 
@@ -57,10 +58,7 @@ exports.Vote = async (req, res) => {
                 return res.status(400).json({message: 'Rank is required'});
             }
         }
-
-       
         
-        // for multiple choice 
         const newVote = new Vote({
             poll_id,
             voter_id:decoded.userID,
@@ -69,9 +67,7 @@ exports.Vote = async (req, res) => {
             ranks
         })
        
-       
-
-      await newVote.save()
+       await newVote.save()
 
 
        return res.status(200).json({message:"You vote has been recorded successfully"})

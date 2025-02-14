@@ -18,10 +18,11 @@ moongose
 
 const app = express();
 
+app.use(cookieParser())
+
 //body parser
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
-app.use(cookieParser())
 
 // passport
 app.use(passport.initialize())
@@ -29,8 +30,8 @@ app.use(passport.initialize())
 // cors
 app.use(cors({
   origin:'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
-  allowedHeaders: ['Content-Type','Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization','Access-Control-Allow-Origin'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization','Access-Control-Allow-Headers'],
   credentials:true
 }));
 

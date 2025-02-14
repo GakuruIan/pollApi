@@ -5,7 +5,6 @@ const PollController = require('../controllers/PollController')
 const VoteController = require('../controllers/voteController')
 const passport = require('passport')
 const expressRateLimiter = require('express-rate-limit')
-const { CreatePoll } = require('../controllers/PollController')
 
 
 const rateLimiter = expressRateLimiter({

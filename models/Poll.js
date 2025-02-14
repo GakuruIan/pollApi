@@ -10,7 +10,6 @@ const pollSchema = mongoose.Schema({
     creator:{
       type:mongoose.Schema.Types.ObjectId,
       ref:'user',
-      required:true
     },
     ip:{
         type:String,
@@ -57,7 +56,7 @@ const pollSchema = mongoose.Schema({
         type:Boolean,
         default:false
     },
-    requireParcipantName:{
+    requirePartcipantName:{
         type:Boolean,
         default:false
     },

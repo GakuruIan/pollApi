@@ -97,11 +97,13 @@ exports.Login=async(req,res)=>{
 
     const accessToken = jwt.sign({userID:user._id},process.env.JWT_SECRET,{expiresIn:'1d'})
 
+   
     res.cookie('token',accessToken,{
         httpOnly:process.env.NODE_ENV === 'production',
         maxAge:24 *60*60*1000,
         secure:process.env.NODE_ENV === 'production',
-        sameSite:'Strict'
+        sameSite:'lax',
+        path:'/'
     })
 
     res.status(200).json({message:"Login success"})

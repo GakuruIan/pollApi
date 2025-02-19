@@ -2,7 +2,7 @@ const router = require('express').Router()
 const Upload = require('../services/ImageUpload')
 const UserController = require('../controllers/UsersController')
 const PollController = require('../controllers/PollController')
-const VoteController = require('../controllers/voteController')
+const VoteController = require('../controllers/VoteController')
 const passport = require('passport')
 const expressRateLimiter = require('express-rate-limit')
 
@@ -26,6 +26,7 @@ router.post('/logout',passport.authenticate('jwt',{session:false}),UserControlle
 router.post('/forgot-password',rateLimiter,UserController.ForgotPassword)
 
 router.put('/reset-password',UserController.ResetPassword);
+
 // end of user routes
 
 // poll routes
@@ -40,6 +41,8 @@ router.put('/edit-poll/:id',PollController.EditPoll);
 router.get('/poll/:id',PollController.GetPoll);
 // close poll
 router.put('/close-poll/:id',PollController.ClosePoll);
+// get users polls
+router.get('/my-polls',PollController.GetUsersPolls)
 // delete poll
 router.delete('/delete-poll/:id',PollController.DeletePoll);
 

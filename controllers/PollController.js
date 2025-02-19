@@ -161,6 +161,73 @@ exports.GetPoll = async (req, res) => {
     }
 }
 
+exports.GetUsersPolls=async(req,res)=>{
+
+    try {
+        const LIMIT = 20
+        const page = 1
+
+        const skip = (page - 1) * LIMIT
+
+        const TOKEN = req.cookies.token
+
+        let userID 
+         if(TOKEN){
+             const decode = jwt.verify(TOKEN,process.env.JWT_SECRET)
+             userID = decode.userID
+         }
+
+        
+
+         const polls = await Poll.aggregate([
+            {
+                $match:{
+                     $or: [{creator:userID},{ip:ip_Address.address()}]
+                }
+            },
+            {
+               $lookup:{
+                  from :'votes',
+                  localField:"_id",
+                  foreignField:"poll_id",
+                  as:"votes"
+               }  
+            },
+            {
+                $addFields:{
+                    voteCount:{$size:"$votes"}
+                }
+            },
+            {
+                $project:{
+                    _id:1,
+                    title:1,
+                    poll_type:1,
+                    isClosed:1,
+                    voteCount:1
+                }
+            },
+            {
+                $sort:{
+                    createdAt:-1
+                }
+            },
+            {
+                $skip:skip
+            },
+            {
+                $limit:LIMIT
+            }
+         ])
+
+       res.status(200).json(polls)
+    } catch (error) {
+        console.log(error)
+
+        res.status(500).json({message: 'Internal server error'});
+    }
+}
+
 exports.DeletePoll = async (req, res) => {
     const pollID = req.params.id;
     const {ip} = req.body;

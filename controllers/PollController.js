@@ -177,12 +177,14 @@ exports.GetUsersPolls=async(req,res)=>{
              userID = decode.userID
          }
 
+         const ip_address = ip_Address.address()
+
         
 
          const polls = await Poll.aggregate([
             {
                 $match:{
-                     $or: [{creator:userID},{ip:ip_Address.address()}]
+                     $or: [{creator:userID},{ip:ip_address}]
                 }
             },
             {

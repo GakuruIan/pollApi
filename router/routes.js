@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const Upload = require('../services/ImageUpload')
 const UserController = require('../controllers/UsersController')
+const ResultsController = require('../controllers/ResultsController')
 const PollController = require('../controllers/PollController')
 const VoteController = require('../controllers/VoteController')
 const passport = require('passport')
@@ -39,6 +40,10 @@ router.post('/create-poll',PollController.CreatePoll);
 router.put('/edit-poll/:id',PollController.EditPoll);
 // get all poll
 router.get('/poll/:id',PollController.GetPoll);
+
+// results route
+router.get('/results/:id',ResultsController.GetPollResults)
+
 // close poll
 router.put('/close-poll/:id',PollController.ClosePoll);
 // get users polls
@@ -48,5 +53,7 @@ router.delete('/delete-poll/:id',PollController.DeletePoll);
 
 // vote
 router.post('/vote',VoteController.Vote);
+
+
 
 module.exports =router

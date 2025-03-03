@@ -27,10 +27,26 @@ exports.GetPollResults = async (req, res) => {
         },
       },
       {
+        $lookup: {
+          from: "users",
+          localField: "pollDetails.creator",
+          foreignField: "_id",
+          as: "creatorDetails",
+        },
+      },
+      {
+        $unwind: { path: "$creatorDetails", preserveNullAndEmptyArrays: true },
+      },
+      {
         $addFields: {
           isClosed: "$pollDetails.isClosed",
           title: "$pollDetails.title",
           description: "$pollDetails.description",
+          creator: {
+            _id: "$creatorDetails._id",
+            name: "$creatorDetails.name",
+          },
+          createdAt: "$pollDetails.createdAt",
           total_votes: { $size: "$votes" },
           options: "$pollDetails.options",
           poll_type: "$pollDetails.poll_type",
@@ -90,9 +106,11 @@ exports.GetPollResults = async (req, res) => {
                 title: { $first: "$title" },
                 poll_type: { $first: "$poll_type" },
                 description: { $first: "$description" },
+                creator: { $first: "$creator" },
+                createdAt: { $first: "$createdAt" },
                 isClosed: { $first: "$isClosed" },
                 total_votes: { $first: "$total_votes" },
-                sortedResults: {
+                results: {
                   $push: {
                     option_id: "$options._id",
                     option_name: "$options.option",
@@ -141,6 +159,8 @@ exports.GetPollResults = async (req, res) => {
                 poll_id: { $first: "$poll_id" },
                 title: { $first: "$title" },
                 description: { $first: "$description" },
+                creator: { $first: "$creator" },
+                createdAt: { $first: "$createdAt" },
                 poll_type: { $first: "$poll_type" },
                 isClosed: { $first: "$isClosed" },
                 total_votes: { $first: "$total_votes" },
@@ -157,7 +177,7 @@ exports.GetPollResults = async (req, res) => {
                   $first: {
                     $cond: [
                       { $eq: ["$isClosed", true] },
-                      { $arrayElemAt: ["$ranking_results", 0] },
+                      { $ifNull: ["$ranking_results", []] },
                       null,
                     ],
                   },
@@ -222,7 +242,7 @@ exports.GetPollResults = async (req, res) => {
       return res.status(204).json({ message: "No poll results found" });
     }
 
-    return res.status(200).json({ results: results });
+    return res.status(200).json(results[0]);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Something went wrong" });
